@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DateOrder } from './constants/date-order.enum';
 import { StatsLimits } from './constants/stats-limits.enum';
 import { TimeIntervalResolution } from './constants/time-interval-resolution.enum';
@@ -19,7 +19,10 @@ export class CryptoComponent implements OnInit {
 
   private _cryptoStats: Array<CryptoGraphStats>;
 
-  constructor(private readonly _cryptoService: CryptoService) {
+  constructor(
+    private readonly _cryptoService: CryptoService,
+    private readonly _changeDetectorRef: ChangeDetectorRef
+  ) {
     this._statsLimits = StatsLimits.MEDIUM_LIMIT;
     this._timeIntervalResolution = TimeIntervalResolution.DAY;
     this._dateOrder = DateOrder.DESC;
@@ -51,5 +54,32 @@ export class CryptoComponent implements OnInit {
           });
         }
       });
+  }
+
+  public updateTimeIntervalResolutionByWeek(): void {
+    this._timeIntervalResolution = TimeIntervalResolution.WEEK;
+
+    this._initializeCryptoStats();
+
+    this._changeDetectorRef.detectChanges();
+    this._changeDetectorRef.markForCheck();
+  }
+
+  public updateTimeIntervalResolutionByDay(): void {
+    this._timeIntervalResolution = TimeIntervalResolution.MONTH;
+
+    this._initializeCryptoStats();
+
+    this._changeDetectorRef.detectChanges();
+    this._changeDetectorRef.markForCheck();
+  }
+
+  public updateTimeIntervalResolutionByYear(): void {
+    this._timeIntervalResolution = TimeIntervalResolution.YEAR;
+
+    this._initializeCryptoStats();
+
+    this._changeDetectorRef.detectChanges();
+    this._changeDetectorRef.markForCheck();
   }
 }
