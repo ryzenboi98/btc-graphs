@@ -6,6 +6,7 @@ export type Crypto = {
     open: number;
     volume: number;
     avg_close: number | null;
+    close: number | null;
     change: null;
     timestamp: Date;
   }>;

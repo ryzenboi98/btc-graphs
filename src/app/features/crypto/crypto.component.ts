@@ -4,7 +4,6 @@ import { StatsLimits } from './constants/stats-limits.enum';
 import { TimeIntervalResolution } from './constants/time-interval-resolution.enum';
 import { FetchCryptoStatsDTO } from './dtos/fetch-crypto-stats.dto';
 import { CryptoService } from './services/crypto.service';
-import { CryptoGraphStats } from './types/crypto-graph-stats.type';
 import { Crypto } from './types/crypto.type';
 
 @Component({
@@ -17,13 +16,13 @@ export class CryptoComponent implements OnInit {
   private _timeIntervalResolution: TimeIntervalResolution;
   private _dateOrder: DateOrder;
 
-  private _cryptoStats: Array<CryptoGraphStats>;
+  private _cryptoStats: Array<number>;
 
   constructor(
     private readonly _cryptoService: CryptoService,
     private readonly _changeDetectorRef: ChangeDetectorRef
   ) {
-    this._statsLimits = StatsLimits.MEDIUM_LIMIT;
+    this._statsLimits = StatsLimits.MIN_LIMIT;
     this._timeIntervalResolution = TimeIntervalResolution.DAY;
     this._dateOrder = DateOrder.DESC;
     this._cryptoStats = [];
@@ -31,6 +30,10 @@ export class CryptoComponent implements OnInit {
 
   ngOnInit(): void {
     this._initializeCryptoStats();
+  }
+
+  public get cryptoStats(): Array<number> {
+    return this._cryptoStats;
   }
 
   private _initializeCryptoStats(): void {
@@ -43,21 +46,22 @@ export class CryptoComponent implements OnInit {
     this._cryptoService
       ._fetchCryptoStats(fetchCryptoStatsDTO)
       .subscribe((data: Crypto) => {
-        console.log(data);
         const { items } = data;
+        const stats = [];
 
         for (const item of items) {
-          this._cryptoStats.push({
-            lower: item.lower,
-            higher: item.higher,
-            avgClose: item.avg_close!,
-          });
+          stats.push(item.avg_close !== null ? item.avg_close! : item.close!);
         }
+
+        this._cryptoStats = stats;
+
+        this._changeDetectorRef.detectChanges();
       });
   }
 
   public updateTimeIntervalResolutionByWeek(): void {
     this._timeIntervalResolution = TimeIntervalResolution.WEEK;
+    this._dateOrder = DateOrder.ASC;
 
     this._initializeCryptoStats();
 
@@ -67,6 +71,7 @@ export class CryptoComponent implements OnInit {
 
   public updateTimeIntervalResolutionByDay(): void {
     this._timeIntervalResolution = TimeIntervalResolution.MONTH;
+    this._dateOrder = DateOrder.ASC;
 
     this._initializeCryptoStats();
 
@@ -76,6 +81,7 @@ export class CryptoComponent implements OnInit {
 
   public updateTimeIntervalResolutionByYear(): void {
     this._timeIntervalResolution = TimeIntervalResolution.YEAR;
+    this._dateOrder = DateOrder.ASC;
 
     this._initializeCryptoStats();
 

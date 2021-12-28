@@ -5,6 +5,6 @@
         <button (click)="this.updateTimeIntervalResolutionByYear()">By Year</button>
     </div>
     <div class="graph-row">
-        <app-canvas></app-canvas>
+        <app-canvas [canvasProps]="this.cryptoStats"></app-canvas>
     </div>
 </div>

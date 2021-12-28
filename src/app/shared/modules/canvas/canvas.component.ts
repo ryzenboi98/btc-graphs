@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { CryptoGraphStats } from 'src/app/features/crypto/types/crypto-graph-stats.type';
 import { CanvasChartOptions } from './types/canvas-chart-options.type';
 
 @Component({
@@ -12,10 +11,10 @@ export class CanvasComponent implements OnInit {
   @ViewChild('chartCanvas', { static: true }) canvasElement!: ElementRef;
 
   @Input() canvasChartOptions!: CanvasChartOptions;
-  @Input() set canvasProps(props: { updatedSeries: Array<CryptoGraphStats> }) {
-    if (props !== undefined) {
+  @Input() set canvasProps(props: Array<number>) {
+    if (props !== undefined && props.length > 0) {
       this._cleanChart();
-      this._updateChart(props.updatedSeries);
+      this._updateChart(props);
     }
   }
 
@@ -42,11 +41,11 @@ export class CanvasComponent implements OnInit {
     return {
       type: 'bar',
       data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        labels: [],
         datasets: [
           {
-            label: 'My First dataset',
-            data: [0, 10, 5, 2, 20, 30, 45],
+            label: '',
+            data: [],
           },
         ],
       },
@@ -61,5 +60,23 @@ export class CanvasComponent implements OnInit {
     );
   }
 
-  private _updateChart(series: Array<CryptoGraphStats>): void {}
+  private _updateChart(series: Array<number>): void {
+    const labels = [];
+
+    for (let i = 1; i <= series.length; i++) {
+      labels.push(i);
+    }
+
+    this._canvasChart.data.labels = labels;
+    this._canvasChart.data.datasets = [
+      {
+        label: 'Average',
+        data: series,
+      },
+    ];
+
+    console.log(this._canvasChart.data.datasets);
+
+    this._canvasChart.update('resize');
+  }
 }
