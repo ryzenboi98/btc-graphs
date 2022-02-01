@@ -11,7 +11,7 @@ export class CanvasComponent implements OnInit {
   @ViewChild('chartCanvas', { static: true }) canvasElement!: ElementRef;
 
   @Input() canvasChartOptions!: CanvasChartOptions;
-  @Input() set canvasProps(props: Array<number>) {
+  @Input() set canvasProps(props: Array<object>) {
     if (props !== undefined && props.length > 0) {
       this._cleanChart();
       this._updateChart(props);
@@ -60,22 +60,33 @@ export class CanvasComponent implements OnInit {
     );
   }
 
-  private _updateChart(series: Array<number>): void {
-    const labels = [];
+  private _updateChart(series: Array<object>): void {
+    var labels = [];
 
-    for (let i = 1; i <= series.length; i++) {
-      labels.push(i);
+    for (var serie of series.values())
+      labels.push((serie as any)['timestamp'])
+
+    var close_values = []
+
+    for (var serie of series.values())
+      close_values.push((serie as any)['close'])
+
+    if (close_values[0] == null) {
+      close_values = []
+      for (var serie of series.values())
+        close_values.push((serie as any)['avg_close'])
+    } else {
+      labels = labels.reverse()
+      close_values = close_values.reverse()
     }
 
-    this._canvasChart.data.labels = labels;
+    this._canvasChart.data.labels = labels
     this._canvasChart.data.datasets = [
       {
         label: 'Average',
-        data: series,
+        data: close_values,
       },
     ];
-
-    console.log(this._canvasChart.data.datasets);
 
     this._canvasChart.update('resize');
   }

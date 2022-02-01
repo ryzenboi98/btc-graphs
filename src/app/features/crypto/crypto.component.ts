@@ -16,7 +16,7 @@ export class CryptoComponent implements OnInit {
   private _timeIntervalResolution: TimeIntervalResolution;
   private _dateOrder: DateOrder;
 
-  private _cryptoStats: Array<number>;
+  private _cryptoStats: Array<object>;
 
   constructor(
     private readonly _cryptoService: CryptoService,
@@ -32,7 +32,7 @@ export class CryptoComponent implements OnInit {
     this._initializeCryptoStats();
   }
 
-  public get cryptoStats(): Array<number> {
+  public get cryptoStats(): Array<object> {
     return this._cryptoStats;
   }
 
@@ -48,12 +48,12 @@ export class CryptoComponent implements OnInit {
       .subscribe((data: Crypto) => {
         const { items } = data;
         const stats = [];
-
+        
         for (const item of items) {
-          stats.push(item.avg_close !== null ? item.avg_close! : item.close!);
+          stats.push(item);
         }
 
-        this._cryptoStats = stats;
+        this._cryptoStats = items;
 
         this._changeDetectorRef.detectChanges();
       });
