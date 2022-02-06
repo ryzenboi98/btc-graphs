@@ -26,6 +26,13 @@ export class CanvasComponent implements OnInit {
     }
   }
 
+  @Input() set canvasSVMRAccuracyProps(props: Array<object>) {
+    if (props !== undefined && props.length > 0) {
+      this._cleanChart();
+      this._updateSVMRAccuracyChart(props);
+    }
+  }
+
   private _canvasChart!: Chart;
 
   private _canvasChartOptions!: any;
@@ -107,7 +114,6 @@ export class CanvasComponent implements OnInit {
     for (var serie of series.values())
       labels.push((serie as any)['date'])
 
-    console.log('wtf')
     console.log(series)
 
     var value_predictions = []
@@ -120,6 +126,31 @@ export class CanvasComponent implements OnInit {
     this._canvasChart.data.datasets = [
       {
         label: 'Prediction value',
+        data: value_predictions,
+      },
+    ];
+
+    this._canvasChart.update('resize');
+  }
+
+  private _updateSVMRAccuracyChart(series: Array<object>): void {
+    var labels = [];
+
+    for (var serie of series.values())
+      labels.push((serie as any)['date'])
+
+    console.log(series)
+
+    var value_predictions = []
+
+    for (var serie of series.values())
+    value_predictions.push((serie as any)['accuracy'])
+    
+
+    this._canvasChart.data.labels = labels
+    this._canvasChart.data.datasets = [
+      {
+        label: 'Accuracy',
         data: value_predictions,
       },
     ];
