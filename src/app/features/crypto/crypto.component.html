@@ -8,15 +8,21 @@
         <button (click)="this.updateTimeIntervalResolutionByDay()">By Month</button>
         <button (click)="this.updateTimeIntervalResolutionByYear()">By Year</button>
     </div>
-    <div class="graph-row">
+    <div class="graph-row mb-4">
         <app-canvas [canvasProps]="this.cryptoStats"></app-canvas>        
     </div>
-
-
-    <div class="graph-row">
+    
+    <div class="row">
+        <h2>Bitcoin SVMR Predictions (7 days)</h2>
+    </div>
+    <div class="graph-row mb-4">
         <app-canvas [canvasSVMRProps]="this.svmrStats"></app-canvas>        
     </div>
-         
+
+
+    <div class="row">
+        <h2>Bitcoin SVMR Accuracies (7 days)</h2>
+    </div>     
     <div class="graph-row">
         <app-canvas [canvasSVMRAccuracyProps]="this.svmrStats"></app-canvas>        
     </div>
