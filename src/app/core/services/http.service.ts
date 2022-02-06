@@ -11,7 +11,7 @@ export class HttpService {
 
   public fetchByParams<T>(
     routeURL: string,
-    httpParams: HttpParams
+    httpParams?: HttpParams
   ): Observable<T> {
     const headers = new HttpHeaders().append(
       'Access-Control-Allow-Origin',

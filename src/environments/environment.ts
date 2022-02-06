@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiURL: 'https://btc-stats.herokuapp.com',
+  apiURL: 'http://localhost:8000',
 };
 
 /*

@@ -6,6 +6,7 @@ import { CryptoStatsKeys } from '../constants/crypto-stats-keys.enum';
 import { FetchCryptoStatsDTO } from '../dtos/fetch-crypto-stats.dto';
 import { catchError, map } from 'rxjs/operators';
 import { Crypto } from '../types/crypto.type';
+import { SVMR } from '../types/svmr.type';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,26 @@ export class CryptoService {
         .fetchByParams<Crypto>(routeURL, httpParams)
         .pipe(
           map((data: Crypto) => {
+            observer.next(data);
+            return observer.complete();
+          }),
+          catchError((error) => {
+            return throwError(observer.error(error));
+          })
+        )
+        .subscribe();
+    });
+  }
+
+
+  public _fetchSVMRStats() {
+    return new Observable((observer: Observer<SVMR>) => {
+      const routeURL = 'svmr';
+
+      this._httpService
+        .fetchByParams<SVMR>(routeURL)
+        .pipe(
+          map((data: SVMR) => {
             observer.next(data);
             return observer.complete();
           }),

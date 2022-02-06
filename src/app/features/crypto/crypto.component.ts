@@ -5,6 +5,7 @@ import { TimeIntervalResolution } from './constants/time-interval-resolution.enu
 import { FetchCryptoStatsDTO } from './dtos/fetch-crypto-stats.dto';
 import { CryptoService } from './services/crypto.service';
 import { Crypto } from './types/crypto.type';
+import { SVMR } from './types/svmr.type';
 
 @Component({
   selector: 'app-crypto',
@@ -17,6 +18,7 @@ export class CryptoComponent implements OnInit {
   private _dateOrder: DateOrder;
 
   private _cryptoStats: Array<object>;
+  private _svmrStats: Array<object>;
 
   constructor(
     private readonly _cryptoService: CryptoService,
@@ -26,15 +28,22 @@ export class CryptoComponent implements OnInit {
     this._timeIntervalResolution = TimeIntervalResolution.DAY;
     this._dateOrder = DateOrder.DESC;
     this._cryptoStats = [];
+    this._svmrStats = [];
   }
 
   ngOnInit(): void {
     this._initializeCryptoStats();
+    this._initializeSVMRStats();
   }
 
   public get cryptoStats(): Array<object> {
     return this._cryptoStats;
   }
+
+  public get svmrStats(): Array<object> {
+    return this._svmrStats;
+  }
+
 
   private _initializeCryptoStats(): void {
     const fetchCryptoStatsDTO: FetchCryptoStatsDTO = {
@@ -57,6 +66,22 @@ export class CryptoComponent implements OnInit {
 
         this._changeDetectorRef.detectChanges();
       });
+  }
+
+  private _initializeSVMRStats(): void {
+    this._cryptoService._fetchSVMRStats()
+    .subscribe((data: SVMR) => {
+      const { items } = data;
+      const stats = [];
+      
+      for (const item of items) {
+        stats.push(item);
+      }
+
+      this._svmrStats = items;
+
+      this._changeDetectorRef.detectChanges();
+    });
   }
 
   public updateTimeIntervalResolutionByWeek(): void {
